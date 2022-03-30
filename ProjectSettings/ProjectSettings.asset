@@ -339,6 +339,8 @@ PlayerSettings:
     m_EncodingQuality: 1
   - m_BuildTarget: GameCoreXboxOne
     m_EncodingQuality: 1
+  - m_BuildTarget: WebGL
+    m_EncodingQuality: 1
   m_BuildTargetGroupLightmapSettings: []
   m_BuildTargetNormalMapEncoding: []
   playModeTestRunnerEnabled: 0
