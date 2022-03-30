@@ -94,6 +94,8 @@ public class Prospector : MonoBehaviour {
 			cp.slotDef = tSD;
 			cp.state = eCardState.tableau;
 
+			cp.SetSortingLayerName(tSD.layerName);
+
 			tableau.Add(cp);
 		}
 	}
