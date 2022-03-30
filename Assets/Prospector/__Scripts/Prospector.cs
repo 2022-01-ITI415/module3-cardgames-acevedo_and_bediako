@@ -24,6 +24,7 @@ public class Prospector : MonoBehaviour {
 		deck = GetComponent<Deck> ();
 		deck.InitDeck (deckXML.text);
 
+		
 		Deck.Shuffle(ref deck.cards);
 		
 		Card c;
@@ -31,6 +32,7 @@ public class Prospector : MonoBehaviour {
 			c = deck.cards[cNum];
 			c.transform.localPosition = new Vector3((cNum%13)*3, cNum/13*4, 0);
 		}
+		
 	}
 
 }
