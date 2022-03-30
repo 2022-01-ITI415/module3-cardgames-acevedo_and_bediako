@@ -34,7 +34,7 @@ public class Layout : MonoBehaviour
         multiplier.y = float.Parse(xml["multiplier"][0].att("y"));
 
         SlotDef tSD;
-        PT_XNLHashList slotsX = sortingLayerNames["slot"];
+        PT_XMLHashList slotsX = xml["slot"];
 
         for(int i =0; i<slotsX.Count; i++){
             tSD = new SlotDef();
@@ -64,7 +64,7 @@ public class Layout : MonoBehaviour
                     
                     }
 
-                    slotsDefs.Add(tSD);
+                    slotDefs.Add(tSD);
                     break;
 
                 case "drawpile":
