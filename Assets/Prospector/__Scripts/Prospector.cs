@@ -19,7 +19,7 @@ public class Prospector : MonoBehaviour {
 	public Vector2				fsPosRun = new Vector2(0.5f, 0.75f);
 	public Vector2				fsPosMid2 = new Vector2(0.4f, 1.0f);
 	public Vector2				fsPosEnd = new Vector2(0.5f, 0.95f);
-	public float				reloadDelay = 2f;
+	public float				reloadDelay = 5f;
 	public Text					gameOverText, roundResultText, highScoreText;
 
 
