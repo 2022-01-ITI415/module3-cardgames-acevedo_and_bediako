@@ -25,7 +25,7 @@ public class Layout : MonoBehaviour
     public SlotDef          discardPile;
     public string[]         sortingLayerNames = new string[] {"Row0","Row1","Row2","Row3","Discard","Draw"};
 
-    public async void ReadLayout(string xmlText){
+    public void ReadLayout(string xmlText){
         xmlr = new PT_XMLReader();
         xmlr.Parse(xmlText);
         xml = xmlr.xml["xml"][0];
