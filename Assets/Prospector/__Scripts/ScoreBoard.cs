@@ -22,7 +22,7 @@ public class ScoreBoard : MonoBehaviour
         }
         set{
             _score = value;
-            _scoreString = _score.ToString("N0");
+            scoreString = _score.ToString("N0");
         }
     }
 
