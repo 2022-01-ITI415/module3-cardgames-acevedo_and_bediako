@@ -326,12 +326,12 @@ public class Pyramid : MonoBehaviour {
 	public bool CheckRank(CardPyramid c0, CardPyramid c1){
 		if(!c0.faceUp || !c1.faceUp) return(false);
 
-		if(Mathf.Abs(c0.rank - c1.rank) == 1){
+		/*if(Mathf.Abs(c0.rank - c1.rank) == 1){
 			return(true);
-		}
+		}*/
 
 		if(c0.rank + c1.rank == 13) return(true);
-		if(c0.rank || c1.rank == 13) return(true);
+		if(c0.rank == 13 || c1.rank == 13) return(true);
 
 		return(false);
 	}
