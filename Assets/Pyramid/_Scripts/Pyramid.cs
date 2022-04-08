@@ -25,12 +25,12 @@ public class Pyramid : MonoBehaviour {
 
 	[Header("Set Dynamically")]
 	public Deck						deck;
-	public Layout					layout;
-	public List<CardProspector>		drawPile;
+	public LayoutPy					layout;
+	public List<CardPyramid>		drawPile;
 	public Transform				layoutAnchor;
-	public CardProspector			target;
-	public List<CardProspector>		tableau;
-	public List<CardProspector>		discardPile;
+	public CardPyramid				target;
+	public List<CardPyramid>		tableau;
+	public List<CardPyramid>		discardPile;
 	public FloatingScore			fsRun;
 
 	void Awake(){
@@ -45,7 +45,7 @@ public class Pyramid : MonoBehaviour {
 			highScoreText = go.GetComponent<Text>();
 		}
 
-		int highScore = ScoreManager.HIGH_SCORE;
+		int highScore = ScoreManagerPy.HIGH_SCORE;
 		string hScore = "High Score: "+Utils.AddCommasToNumber(highScore);
 		go.GetComponent<Text>().text = hScore;
 
@@ -68,7 +68,7 @@ public class Pyramid : MonoBehaviour {
 	}
 
 	void Start() {
-		//ScoreBoard.S.score = ScoreManager.SCORE;
+		ScoreBoardPy.S.score = ScoreManagerPy.SCORE;
 
 		deck = GetComponent<Deck> ();
 		deck.InitDeck (deckXML.text);
@@ -82,29 +82,29 @@ public class Pyramid : MonoBehaviour {
 		//	c.transform.localPosition = new Vector3((cNum%13)*3, cNum/13*4, 0);
 		//}
 		
-		layout = GetComponent<Layout> ();
+		layout = GetComponent<LayoutPy> ();
 		layout.ReadLayout(layoutXML.text);
 
-		drawPile = ConvertListCardsToListCardProspectors(deck.cards);
+		drawPile = ConvertListCardsToListCardPyramids(deck.cards);
 
 		LayoutGame();
 	}
 
-	List<CardProspector> ConvertListCardsToListCardProspectors(List<Card> lCD){
-		List<CardProspector> lCP = new List<CardProspector>();
-		CardProspector tCP;
+	List<CardPyramid> ConvertListCardsToListCardPyramids(List<Card> lCD){
+		List<CardPyramid> lCP = new List<CardPyramid>();
+		CardPyramid tCP;
 		
-		foreach(CardProspector tCD in lCD){
-			tCP = tCD as CardProspector;
+		foreach(CardPyramid tCD in lCD){
+			tCP = tCD as CardPyramid;
 			lCP.Add(tCP);
 		}
 
 		return(lCP);
 	}
 
-	CardProspector Draw(){
+	CardPyramid Draw(){
 		
-		CardProspector cd = drawPile[0];
+		CardPyramid cd = drawPile[0];
 		drawPile.RemoveAt(0);
 		
 		return(cd);
@@ -118,8 +118,8 @@ public class Pyramid : MonoBehaviour {
 			layoutAnchor.transform.position = layoutCenter;
 		}
 
-		CardProspector cp;
-		foreach(SlotDef tSD in layout.slotDefs){
+		CardPyramid cp;
+		foreach(SlotDefPy tSD in layout.slotDefs){
 			cp = Draw();
 			cp.faceUp = tSD.faceUp;
 			cp.transform.parent = layoutAnchor;
@@ -130,16 +130,16 @@ public class Pyramid : MonoBehaviour {
 				-tSD.layerID);
 
 			cp.layoutID = tSD.id;
-			cp.slotDef = tSD;
-			cp.state = eCardState.tableau;
+			cp.slotDefPy = tSD;
+			cp.state = ePyCardState.tableau;
 
 			cp.SetSortingLayerName(tSD.layerName);
 
 			tableau.Add(cp);
 		}
 
-		foreach(CardProspector tCP in tableau){
-			foreach(int hid in tCP.slotDef.hiddenBy){
+		foreach(CardPyramid tCP in tableau){
+			foreach(int hid in tCP.slotDefPy.hiddenBy){
 				cp = FindCardByLayoutID(hid);
 				tCP.hiddenBy.Add(cp);
 			}
@@ -149,8 +149,8 @@ public class Pyramid : MonoBehaviour {
 		UpdateDrawPile();
 	}
 
-	CardProspector FindCardByLayoutID(int layoutID){
-		foreach(CardProspector tCP in tableau){
+	CardPyramid FindCardByLayoutID(int layoutID){
+		foreach(CardPyramid tCP in tableau){
 			if(tCP.layoutID == layoutID){
 				return(tCP);
 			}
@@ -160,11 +160,11 @@ public class Pyramid : MonoBehaviour {
 	}
 
 	void SetTableauFaces(){
-		foreach(CardProspector cd in tableau){
+		foreach(CardPyramid cd in tableau){
 			bool faceUp = true;
 
-			foreach(CardProspector cover in cd.hiddenBy){
-				if(cover.state == eCardState.tableau){
+			foreach(CardPyramid cover in cd.hiddenBy){
+				if(cover.state == ePyCardState.tableau){
 					faceUp = false;
 				}
 			}
@@ -173,8 +173,8 @@ public class Pyramid : MonoBehaviour {
 		}
 	}
 
-	void MoveToDiscard(CardProspector cd){
-		cd.state = eCardState.discard;
+	void MoveToDiscard(CardPyramid cd){
+		cd.state = ePyCardState.discard;
 		discardPile.Add(cd);
 		cd.transform.parent = layoutAnchor;
 
@@ -189,11 +189,11 @@ public class Pyramid : MonoBehaviour {
 		cd.SetSortOrder(-100+discardPile.Count);
 	}
 
-	void MoveToTarget(CardProspector cd){
+	void MoveToTarget(CardPyramid cd){
 		if(target != null) MoveToDiscard(target);
 		target = cd;
 
-		cd.state = eCardState.target;
+		cd.state = ePyCardState.target;
 		cd.transform.parent = layoutAnchor;
 		cd.transform.localPosition = new Vector3(
 			layout.multiplier.x * layout.discardPile.x,
@@ -207,7 +207,7 @@ public class Pyramid : MonoBehaviour {
 	}
 
 	void UpdateDrawPile(){
-		CardProspector cd;
+		CardPyramid cd;
 		
 		for (int i=0; i<drawPile.Count; i++){
 			cd = drawPile[i];
@@ -221,34 +221,34 @@ public class Pyramid : MonoBehaviour {
 			);
 
 			cd.faceUp = false;
-			cd.state = eCardState.drawpile;
+			cd.state = ePyCardState.drawpile;
 			cd.SetSortingLayerName(layout.drawPile.layerName);
 			cd.SetSortOrder(-10*i);
 		}
 	}
 
-	public void CardClicked(CardProspector cd){
+	public void CardClicked(CardPyramid cd){
 		
 		switch (cd.state){
-			case eCardState.target:
+			case ePyCardState.target:
 				break;
 
-			case eCardState.drawpile:
+			case ePyCardState.drawpile:
 				MoveToDiscard(target);
 				MoveToTarget(Draw());
 				UpdateDrawPile();
-				ScoreManager.EVENT(eScoreEvent.draw);
-				FloatingScoreHandler(eScoreEvent.draw);
+				ScoreManagerPy.EVENT(eScoreEventPy.draw);
+				FloatingScoreHandler(eScoreEventPy.draw);
 				break;
 
-			case eCardState.tableau:
+			case ePyCardState.tableau:
 				bool validMatch = true;
 				
 				if(!cd.faceUp){
 					validMatch = false;
 				}
 				
-				if(!AdjacentRank(cd,target)){
+				if(!CheckRank(cd,target)){
 					validMatch = false;
 				}
 
@@ -257,8 +257,8 @@ public class Pyramid : MonoBehaviour {
 				tableau.Remove(cd);
 				MoveToTarget(cd);	
 				SetTableauFaces();	
-				ScoreManager.EVENT(eScoreEvent.mine);
-				FloatingScoreHandler(eScoreEvent.mine);		
+				ScoreManagerPy.EVENT(eScoreEventPy.mine);
+				FloatingScoreHandler(eScoreEventPy.mine);		
 				break;
 		}
 		
@@ -275,8 +275,8 @@ public class Pyramid : MonoBehaviour {
 			return;
 		}
 
-		foreach(CardProspector cd in tableau){
-			if(AdjacentRank(cd, target)){
+		foreach(CardPyramid cd in tableau){
+			if(CheckRank(cd, target)){
 				return;
 			}
 		}
@@ -285,7 +285,7 @@ public class Pyramid : MonoBehaviour {
 	}
 
 	void GameOver(bool won){
-		int score = ScoreManager.SCORE;
+		int score = ScoreManagerPy.SCORE;
 
 		if(fsRun != null) score += fsRun.score;
 
@@ -297,13 +297,13 @@ public class Pyramid : MonoBehaviour {
 			roundResultText.text = "You won this round!\nRoundScore: "+score;
 			ShowResultsUI(true);
 
-			ScoreManager.EVENT(eScoreEvent.gameWin);
-			FloatingScoreHandler(eScoreEvent.gameWin);
+			ScoreManagerPy.EVENT(eScoreEventPy.gameWin);
+			FloatingScoreHandler(eScoreEventPy.gameWin);
 		}else{
 			//print("Game Over, You lost. :(");
 
 			gameOverText.text = "Game Over";
-			if(ScoreManager.HIGH_SCORE <= score){
+			if(ScoreManagerPy.HIGH_SCORE <= score){
 				string str = "You got the high score!\nHigh Score: "+score;
 				roundResultText.text = str;
 			}else{
@@ -311,8 +311,8 @@ public class Pyramid : MonoBehaviour {
 			}
 			ShowResultsUI(true);
 
-			ScoreManager.EVENT(eScoreEvent.gameLoss);
-			FloatingScoreHandler(eScoreEvent.gameLoss);
+			ScoreManagerPy.EVENT(eScoreEventPy.gameLoss);
+			FloatingScoreHandler(eScoreEventPy.gameLoss);
 		}
 
 		//SceneManager.LoadScene("__Prospector_Scene_0");
@@ -320,36 +320,36 @@ public class Pyramid : MonoBehaviour {
 	}
 
 	void ReloadLevel(){
-		SceneManager.LoadScene("__Prospector_Scene_0");
+		SceneManager.LoadScene("Pyramid Solitaire");
 	}
 
-	public bool AdjacentRank(CardProspector c0, CardProspector c1){
+	public bool CheckRank(CardPyramid c0, CardPyramid c1){
 		if(!c0.faceUp || !c1.faceUp) return(false);
 
 		if(Mathf.Abs(c0.rank - c1.rank) == 1){
 			return(true);
 		}
 
-		if(c0.rank == 1 && c1.rank == 13) return(true);
-		if(c0.rank == 13 && c1.rank == 1) return(true);
+		if(c0.rank + c1.rank == 13) return(true);
+		if(c0.rank || c1.rank == 13) return(true);
 
 		return(false);
 	}
 
-	void FloatingScoreHandler(eScoreEvent evt){
+	void FloatingScoreHandler(eScoreEventPy evt){
 		List<Vector2> fsPts;
 		switch(evt){
 			
-			case eScoreEvent.draw:
-			case eScoreEvent.gameWin:
-			case eScoreEvent.gameLoss:
+			case eScoreEventPy.draw:
+			case eScoreEventPy.gameWin:
+			case eScoreEventPy.gameLoss:
 				
 				if(fsRun != null){
 					fsPts = new List<Vector2>();
 					fsPts.Add(fsPosRun);
 					fsPts.Add(fsPosMid2);
 					fsPts.Add(fsPosEnd);
-					fsRun.reportFinishTo = ScoreBoard.S.gameObject;
+					fsRun.reportFinishTo = ScoreBoardPy.S.gameObject;
 					fsRun.Init(fsPts, 0, 1);
 					fsRun.fontSizes = new List<float>(new float[] {28,36,4});
 					fsRun = null;
@@ -357,7 +357,7 @@ public class Pyramid : MonoBehaviour {
 
 			break;
 
-			case eScoreEvent.mine:
+			case eScoreEventPy.mine:
 				FloatingScore fs;
 				
 				Vector2 p0 = Input.mousePosition;
@@ -368,7 +368,7 @@ public class Pyramid : MonoBehaviour {
 				fsPts.Add(p0);
 				fsPts.Add(fsPosMid);
 				fsPts.Add(fsPosRun);
-				fs = ScoreBoard.S.CreateFloatingScore(ScoreManager.CHAIN, fsPts);
+				fs = ScoreBoardPy.S.CreateFloatingScore(ScoreManagerPy.CHAIN, fsPts);
 				fs.fontSizes = new List<float>(new float[] {4, 50, 28});
 
 				if(fsRun == null){
